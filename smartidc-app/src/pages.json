@@ -1,0 +1,68 @@
+{
+  "pages": [
+    {
+      "path": "pages/index/index",
+      "style": {
+        "navigationBarTitleText": "智维云 · 现场控制台"
+      }
+    },
+    {
+      "path": "pages/login/index",
+      "style": {
+        "navigationBarTitleText": "工程师安全接入",
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/ticket/list",
+      "style": {
+        "navigationBarTitleText": "巡检与消警工单"
+      }
+    },
+    {
+      "path": "pages/ticket/detail",
+      "style": {
+        "navigationBarTitleText": "现场排障与消警",
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/rack/profile",
+      "style": {
+        "navigationBarTitleText": "机柜微画像"
+      }
+    },
+    {
+      "path": "pages/my/index",
+      "style": {
+        "navigationBarTitleText": "个人中心与多租户"
+      }
+    }
+  ],
+  "globalStyle": {
+    "navigationBarTextStyle": "white",
+    "navigationBarTitleText": "智维云随行端",
+    "navigationBarBackgroundColor": "#0f172a",
+    "backgroundColor": "#0b0f19"
+  },
+  "tabBar": {
+    "color": "#94a3b8",
+    "selectedColor": "#38bdf8",
+    "backgroundColor": "#0f172a",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "工作台"
+      },
+      {
+        "pagePath": "pages/ticket/list",
+        "text": "工单"
+      },
+      {
+        "pagePath": "pages/my/index",
+        "text": "我的"
+      }
+    ]
+  }
+}

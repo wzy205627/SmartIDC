@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+         http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.smartidc</groupId>
+    <artifactId>smartidc-parent</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <name>smartidc-parent</name>
+    <description>智维云 (SmartIDC) 核心聚合工程根 POM</description>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.3.4</version>
+        <relativePath/>
+    </parent>
+
+    <modules>
+        <module>smartidc-common</module>
+        <module>smartidc-framework</module>
+        <module>smartidc-iot</module>
+        <module>smartidc-biz</module>
+        <module>smartidc-aiops</module>
+        <module>smartidc-admin</module>
+    </modules>
+
+    <properties>
+        <!-- 严格按照 JDK 21 LTS 规范进行交叉编译检查 -->
+        <java.version>21</java.version>
+        <maven.compiler.release>21</maven.compiler.release>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+        <!-- 核心生态依赖版本 -->
+        <smartidc.version>1.0.0-SNAPSHOT</smartidc.version>
+        <mybatis-plus.version>3.5.7</mybatis-plus.version>
+        <redisson.version>3.35.0</redisson.version>
+        <knife4j.version>4.5.0</knife4j.version>
+        <jjwt.version>0.12.6</jjwt.version>
+        <fastjson2.version>2.0.53</fastjson2.version>
+        <hutool.version>5.8.32</hutool.version>
+        <paho.mqtt.version>1.2.5</paho.mqtt.version>
+        <jsqlparser.version>4.9</jsqlparser.version>
+
+        <!-- 阶段 4.1 AIOps 核心依赖版本 -->
+        <spring-ai.version>1.1.2</spring-ai.version>
+        <spring-ai-alibaba.version>1.1.2.2</spring-ai-alibaba.version>
+        <agentscope.version>2.0.3</agentscope.version>
+        <okhttp.version>4.12.0</okhttp.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- 智维云内部子模块 -->
+            <dependency>
+                <groupId>com.smartidc</groupId>
+                <artifactId>smartidc-common</artifactId>
+                <version>${smartidc.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.smartidc</groupId>
+                <artifactId>smartidc-framework</artifactId>
+                <version>${smartidc.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.smartidc</groupId>
+                <artifactId>smartidc-iot</artifactId>
+                <version>${smartidc.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.smartidc</groupId>
+                <artifactId>smartidc-biz</artifactId>
+                <version>${smartidc.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.smartidc</groupId>
+                <artifactId>smartidc-aiops</artifactId>
+                <version>${smartidc.version}</version>
+            </dependency>
+
+            <!-- Spring AI Alibaba Graph 核心 -->
+            <dependency>
+                <groupId>com.alibaba.cloud.ai</groupId>
+                <artifactId>spring-ai-alibaba-graph-core</artifactId>
+                <version>${spring-ai-alibaba.version}</version>
+            </dependency>
+
+            <!-- Spring AI Alibaba DashScope 接入 -->
+            <dependency>
+                <groupId>com.alibaba.cloud.ai</groupId>
+                <artifactId>spring-ai-alibaba-starter-dashscope</artifactId>
+                <version>${spring-ai-alibaba.version}</version>
+            </dependency>
+
+            <!-- Spring AI pgvector -->
+            <dependency>
+                <groupId>org.springframework.ai</groupId>
+                <artifactId>spring-ai-starter-vector-store-pgvector</artifactId>
+                <version>${spring-ai.version}</version>
+            </dependency>
+
+            <!-- AgentScope Java 核心 -->
+            <dependency>
+                <groupId>io.agentscope</groupId>
+                <artifactId>agentscope-core</artifactId>
+                <version>${agentscope.version}</version>
+            </dependency>
+
+            <!-- OkHttp 版本防御性仲裁 -->
+            <dependency>
+                <groupId>com.squareup.okhttp3</groupId>
+                <artifactId>okhttp</artifactId>
+                <version>${okhttp.version}</version>
+            </dependency>
+
+            <!-- MyBatis-Plus 增强生态 -->
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
+                <version>${mybatis-plus.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.jsqlparser</groupId>
+                <artifactId>jsqlparser</artifactId>
+                <version>${jsqlparser.version}</version>
+            </dependency>
+
+            <!-- Redisson 分布式锁与缓存 -->
+            <dependency>
+                <groupId>org.redisson</groupId>
+                <artifactId>redisson-spring-boot-starter</artifactId>
+                <version>${redisson.version}</version>
+            </dependency>
+
+            <!-- Knife4j / OpenAPI 3.0 接口文档 -->
+            <dependency>
+                <groupId>com.github.xiaoymin</groupId>
+                <artifactId>knife4j-openapi3-jakarta-spring-boot-starter</artifactId>
+                <version>${knife4j.version}</version>
+            </dependency>
+
+            <!-- JJWT 权限令牌 -->
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt-api</artifactId>
+                <version>${jjwt.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt-impl</artifactId>
+                <version>${jjwt.version}</version>
+                <scope>runtime</scope>
+            </dependency>
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt-jackson</artifactId>
+                <version>${jjwt.version}</version>
+                <scope>runtime</scope>
+            </dependency>
+
+            <!-- 常用工具包 -->
+            <dependency>
+                <groupId>com.alibaba.fastjson2</groupId>
+                <artifactId>fastjson2</artifactId>
+                <version>${fastjson2.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.hutool</groupId>
+                <artifactId>hutool-all</artifactId>
+                <version>${hutool.version}</version>
+            </dependency>
+
+            <!-- MQTT 物联网客户端 -->
+            <dependency>
+                <groupId>org.eclipse.paho</groupId>
+                <artifactId>org.eclipse.paho.client.mqttv3</artifactId>
+                <version>${paho.mqtt.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.13.0</version>
+                    <configuration>
+                        <release>21</release>
+                        <parameters>true</parameters>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>3.2.5</version>
+                    <configuration>
+                        <argLine>-Dnet.bytebuddy.experimental=true -Xms64m -Xmx384m -XX:TieredStopAtLevel=1 -XX:+UseSerialGC</argLine>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+
+    <repositories>
+        <repository>
+            <id>spring-milestones</id>
+            <name>Spring Milestones</name>
+            <url>https://repo.spring.io/milestone</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+</project>

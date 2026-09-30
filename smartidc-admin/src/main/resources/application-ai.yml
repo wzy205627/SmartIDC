@@ -1,0 +1,33 @@
+spring:
+  ai:
+    dashscope:
+      # API Key 外置化，优先读取环境变量，本地开发兜底
+      api-key: ${DASHSCOPE_API_KEY:sk-ws-H.PDRRXEM.2yxa.MEQCIF2OKiiN4VVeqyZkzqgY59dh6DtTzeXluwP_Nzuh5CxQAiBwNDxrK4Rb5nizRQJPT6ijborXB-5DNMjVheUm8Km1mA}
+      chat:
+        options:
+          model: qwen-plus
+          temperature: 0.2
+      embedding:
+        options:
+          model: qwen3.7-text-embedding-flash # 匹配阿里云百炼最新 flash 模型
+    vectorstore:
+      pgvector:
+        index-type: HNSW
+        distance-type: COSINE_DISTANCE
+        dimensions: 1024 # 严格设置为 1024 维
+        initialize-schema: false # 生产环境由 DDL 显式初始化
+        table-name: vector_store
+
+smartidc:
+  aiops:
+    pgvector:
+      datasource:
+        url: jdbc:postgresql://localhost:5433/smartidc_aiops
+        jdbc-url: jdbc:postgresql://localhost:5433/smartidc_aiops
+        username: smartidc
+        password: smartidc123
+        driver-class-name: org.postgresql.Driver
+      default-ef-search: 100 # 在线检索前动态调大搜索深度
+    checkpoint:
+      key-prefix: "smartidc:graph:checkpoint:"
+      ttl-seconds: 86400 # 快照保留 24 小时

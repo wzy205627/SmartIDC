@@ -1,0 +1,42 @@
+# ==========================================
+# 阶段 1: 提取定制化最小 JRE (jlink)
+# ==========================================
+FROM eclipse-temurin:21-jdk-alpine AS jre-builder
+WORKDIR /builder
+
+RUN jlink \
+    --add-modules java.base,java.sql,java.net.http,java.desktop,java.management,java.naming,java.security.jgss,java.instrument,jdk.crypto.cryptoki,jdk.unsupported \
+    --strip-debug \
+    --no-man-pages \
+    --no-header-files \
+    --compress=2 \
+    --output /custom-jre
+
+# ==========================================
+# 阶段 2: 生产精简运行镜像 (< 180MB)
+# ==========================================
+FROM alpine:3.19
+LABEL maintainer="SmartIDC Architecture Team"
+
+ENV JAVA_HOME=/opt/jre
+ENV PATH="${JAVA_HOME}/bin:${PATH}"
+ENV TZ=Asia/Shanghai
+
+RUN apk add --no-cache tzdata ca-certificates && \
+    cp /usr/share/zoneinfo/${TZ} /etc/localtime && \
+    echo "${TZ}" > /etc/timezone && \
+    mkdir -p /app /opt/jre
+
+COPY --from=jre-builder /custom-jre /opt/jre
+COPY smartidc-admin/target/smartidc-admin-1.0.0-SNAPSHOT.jar /app/app.jar
+
+WORKDIR /app
+EXPOSE 8080
+
+ENTRYPOINT ["java", \
+    "-Djdk.tracePinnedThreads=full", \
+    "-XX:+UseZGC", "-XX:+ZGenerational", \
+    "-XX:+ExitOnOutOfMemoryError", \
+    "-XX:MaxRAMPercentage=75.0", \
+    "-Djava.security.egd=file:/dev/./urandom", \
+    "-jar", "app.jar"]

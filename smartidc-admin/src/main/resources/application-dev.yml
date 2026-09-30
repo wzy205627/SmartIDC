@@ -1,0 +1,80 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /
+
+spring:
+  # 数据源配置 (指向避开冲突的容器端口 3308)
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3308/smartidc?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+    username: root
+    password: root
+
+  # Redis 缓存配置 (指向避开冲突的容器端口 6389)
+  data:
+    redis:
+      host: localhost
+      port: 6389
+      password: smartidc123
+      database: 0
+      timeout: 3000ms
+
+# MyBatis-Plus 参数配置
+mybatis-plus:
+  mapper-locations: classpath*:mapper/**/*.xml
+  global-config:
+    db-config:
+      id-type: auto
+      logic-delete-field: delFlag
+      logic-delete-value: "1"
+      logic-not-delete-value: "0"
+  configuration:
+    map-underscore-to-camel-case: true
+    cache-enabled: false
+#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+# Knife4j 增强文档配置
+knife4j:
+  enable: true
+  openapi:
+    title: 智维云 (SmartIDC) 动环监控与 AIOps 智能运维平台
+    description: 企业级绿色数据中心资产拓扑、动环遥测、告警风暴抑制与 AIOps 人机在环协作中台
+    email: dev@smartidc.com
+    version: v1.0.0 
+    group:
+      default:
+        group-name: 默认核心服务
+        api-rule: package
+        api-rule-resources:
+          - com.smartidc.biz.controller
+          - com.smartidc.aiops.controller
+
+# 日志输出级别
+logging:
+  level:
+    com.smartidc: info
+    org.springframework.web: info
+
+# EMQX 物联网 MQTT 接入配置
+smartidc:
+  mqtt:
+    enabled: true
+    host: tcp://localhost:1883
+    client-id-prefix: smartidc-iot-service
+    username: ""
+    password: ""
+    topic: /sys/smartidc/+/rack/+/telemetry
+    qos: 1
+    keep-alive: 60
+    connection-timeout: 10
+    automatic-reconnect: true
+
+  # MinIO 巡检照片与存证对象存储配置
+  oss:
+    minio:
+      endpoint: http://localhost:9000
+      access-key: smartidc_admin
+      secret-key: smartidc123
+      bucket-name: smartidc-inspection
+      region: us-east-1

@@ -1,0 +1,33 @@
+{
+  "case_id": "CASE-02",
+  "rack_code": "RACK-A01",
+  "status": "HITL_SUSPENDED",
+  "rca_report": {
+    "fault_id": "FAULT-A01-001",
+    "target_rack": "RACK-A01",
+    "root_cause_type": "COOLING_FAILURE",
+    "root_cause_summary": "精密空调 CRAC-A-01 压缩机因过温跳闸，导致 AC-LOOP-01 供电电压跌落至 185V，母联开关未自动闭合，冷风道静压骤降至 12Pa，引发群发性热岛效应",
+    "affected_racks": ["RACK-A01", "RACK-A02", "RACK-A03"],
+    "confidence": 0.95,
+    "evidence_chain": [
+      "CRAC-A-01 状态为 TRIPPED，AC-LOOP-01 电压异常跌落至 185V",
+      "RACK-A01 温度达 41.5℃，同风道相邻机柜同步触发 HOTSPOT_ALARM",
+      "冷风道静压仅 12Pa，远低于安全阈值 25Pa"
+    ]
+  },
+  "sop_recommendation": {
+    "control_flow": {
+      "need_human_approval": true,
+      "risk_level": "CRITICAL",
+      "sop_code": "SOP-COOLING-SWITCH-01",
+      "action_name": "SWITCH_TO_BACKUP_COOLING_LOOP",
+      "target_device": "CRAC-A-01",
+      "parameters": {
+        "force_close_bus_tie_switch": true,
+        "activate_emergency_fans": true
+      }
+    },
+    "display_view": "### 应急排障报告：精密空调冷机跳闸高危倒闸事件\n- 必须由持有高级资质人员现场确认后执行。"
+  },
+  "risk_audit_decision": "NEED_APPROVAL"
+}

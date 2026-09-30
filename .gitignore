@@ -1,0 +1,44 @@
+# ==========================================
+# SmartIDC Git Ignore Configuration
+# ==========================================
+
+# 1. 外部参考源码库 (避免将几千个第三方源码文件混入主仓库)
+/reference/
+
+# 2. 编译与打包构建输出
+**/target/
+build/
+dist/
+out/
+
+# 3. 依赖包缓存
+node_modules/
+.pnpm-store/
+
+# 4. IDE 与编辑器配置文件
+.idea/
+*.iml
+*.iws
+*.ipr
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# 5. 日志与崩溃转储文件
+*.log
+logs/
+hs_err_pid*.log
+replay_pid*.log
+
+# 6. 本地操作系统临时文件
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# 7. 本地测试与环境覆写文件
+.env.local
+.env.*.local
+*.local

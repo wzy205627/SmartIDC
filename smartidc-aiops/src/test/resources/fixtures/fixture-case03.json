@@ -1,0 +1,37 @@
+{
+  "case_id": "CASE-03",
+  "rack_code": "RACK-C01",
+  "status": "COMPLETED",
+  "rca_report": {
+    "fault_id": "FAULT-C01-001",
+    "target_rack": "RACK-C01",
+    "root_cause_type": "UNKNOWN",
+    "root_cause_summary": "传感器瞬态毛刺，相邻动环指标与供电电压正常，判定为非真实故障噪点",
+    "affected_racks": [],
+    "confidence": 0.65,
+    "evidence_chain": ["相邻机柜指标正常", "供电电压 380V 正常", "风道静压 25Pa 正常"]
+  },
+  "sop_recommendation": {
+    "control_flow": {
+      "need_human_approval": false,
+      "risk_level": "LOW",
+      "sop_code": "SOP-FAN-ADJUST-01",
+      "action_name": "ADJUST_FAN_SPEED",
+      "target_device": "RACK-C01",
+      "parameters": {
+        "fan_speed_target_percent": 80,
+        "mode": "AUTO_SELF_HEAL"
+      }
+    },
+    "display_view": "### [噪点过滤] 监测到传感器瞬时毛刺，机柜运行正常，无需人工干预。"
+  },
+  "risk_audit_decision": "AUTO_APPROVED",
+  "execution_result": {
+    "execution_id": "EXEC-FIXTURE-03",
+    "ticket_id": 10003,
+    "action_name": "ADJUST_FAN_SPEED",
+    "target_device": "RACK-C01",
+    "execution_status": "SUCCESS",
+    "receipt_message": "[低危自愈闭环] 设备 RACK-C01 传感器瞬态毛刺，已自动完成指标校验，无需倒闸"
+  }
+}

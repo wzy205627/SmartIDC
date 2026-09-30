@@ -1,0 +1,37 @@
+{
+  "case_id": "CASE-01",
+  "rack_code": "RACK-B01",
+  "status": "COMPLETED",
+  "rca_report": {
+    "fault_id": "FAULT-B01-001",
+    "target_rack": "RACK-B01",
+    "root_cause_type": "UNKNOWN",
+    "root_cause_summary": "目标机柜各项动环指标处于受控状态，无严重故障，仅为机柜出风口轻微温升",
+    "affected_racks": [],
+    "confidence": 0.80,
+    "evidence_chain": ["RACK-B01 出风口温度 33℃", "同风道相邻机柜指标正常"]
+  },
+  "sop_recommendation": {
+    "control_flow": {
+      "need_human_approval": false,
+      "risk_level": "LOW",
+      "sop_code": "SOP-FAN-ADJUST-01",
+      "action_name": "ADJUST_FAN_SPEED",
+      "target_device": "RACK-B01",
+      "parameters": {
+        "fan_speed_target_percent": 80,
+        "mode": "AUTO_SELF_HEAL"
+      }
+    },
+    "display_view": "### [低危自愈] 机柜处于健康受控状态，自动微调天窗风机转速至 80%，无需人工审批。"
+  },
+  "risk_audit_decision": "AUTO_APPROVED",
+  "execution_result": {
+    "execution_id": "EXEC-FIXTURE-01",
+    "ticket_id": 10001,
+    "action_name": "ADJUST_FAN_SPEED",
+    "target_device": "RACK-B01",
+    "execution_status": "SUCCESS",
+    "receipt_message": "[低危自愈闭环] 设备 RACK-B01 已自动调节参数动作: ADJUST_FAN_SPEED，巡检工单已自动报备"
+  }
+}

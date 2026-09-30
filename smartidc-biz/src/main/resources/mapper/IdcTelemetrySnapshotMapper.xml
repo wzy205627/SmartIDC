@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.smartidc.biz.mapper.IdcTelemetrySnapshotMapper">
+
+    <!-- 批量插入动环时序快照 -->
+    <insert id="insertBatch" useGeneratedKeys="true" keyProperty="snapshotId">
+        INSERT INTO idc_telemetry_snapshot (
+            device_id,
+            rack_id,
+            temperature,
+            humidity,
+            voltage,
+            current_amp,
+            power_kw,
+            sample_time
+        ) VALUES
+        <foreach collection="list" item="item" separator=",">
+            (
+                #{item.deviceId},
+                #{item.rackId},
+                #{item.temperature},
+                #{item.humidity},
+                #{item.voltage},
+                #{item.currentAmp},
+                #{item.powerKw},
+                #{item.sampleTime}
+            )
+        </foreach>
+    </insert>
+
+</mapper>

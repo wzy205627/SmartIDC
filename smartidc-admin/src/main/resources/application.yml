@@ -1,0 +1,10 @@
+spring:
+  profiles:
+    active: dev,ai
+  application:
+    name: smartidc-admin
+  threads:
+    virtual:
+      enabled: true   # 启用 JDK 21 虚拟线程全局支持
+  main:
+    banner-mode: console

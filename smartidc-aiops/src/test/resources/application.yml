@@ -1,0 +1,51 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: smartidc-aiops-test
+  profiles:
+    active: ai
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3308/smartidc?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+    username: root
+    password: root
+  data:
+    redis:
+      host: localhost
+      port: 6389
+      password: smartidc123
+      database: 0
+      timeout: 3000ms
+  ai:
+    dashscope:
+      api-key: ${DASHSCOPE_API_KEY:sk-ws-H.PDRRXEM.2yxa.MEQCIF2OKiiN4VVeqyZkzqgY59dh6DtTzeXluwP_Nzuh5CxQAiBwNDxrK4Rb5nizRQJPT6ijborXB-5DNMjVheUm8Km1mA}
+      chat:
+        options:
+          model: qwen-plus
+          temperature: 0.2
+      embedding:
+        options:
+          model: qwen3.7-text-embedding-flash
+    vectorstore:
+      pgvector:
+        index-type: HNSW
+        distance-type: COSINE_DISTANCE
+        dimensions: 1024
+        initialize-schema: false
+        table-name: vector_store
+
+smartidc:
+  aiops:
+    pgvector:
+      datasource:
+        url: jdbc:postgresql://localhost:5433/smartidc_aiops
+        jdbc-url: jdbc:postgresql://localhost:5433/smartidc_aiops
+        username: smartidc
+        password: smartidc123
+        driver-class-name: org.postgresql.Driver
+      default-ef-search: 100
+    checkpoint:
+      key-prefix: "smartidc:graph:checkpoint:"
+      ttl-seconds: 86400

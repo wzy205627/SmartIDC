@@ -1,0 +1,166 @@
+name: SmartIDC
+
+networks:
+  smartidc-net:
+    driver: bridge
+
+volumes:
+  mysql_data:
+    name: docker_mysql_data
+  redis_data:
+    name: docker_redis_data
+  emqx_data:
+    name: docker_emqx_data
+  emqx_log:
+    name: docker_emqx_log
+  pg_data:
+    name: docker_pg_data
+  minio_data:
+    name: docker_minio_data
+
+services:
+  # 1. 核心业务数据库 MySQL 8.0
+  smartidc-mysql:
+    image: mysql:8.0
+    container_name: smartidc-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: smartidc
+      TZ: Asia/Shanghai
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --default-authentication-plugin=mysql_native_password
+      - --max_connections=500
+    ports:
+      - "3308:3306"   # 避开宿主机原生 3306
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ../sql:/docker-entrypoint-initdb.d:ro  # 启动时自动执行初始 SQL
+    networks:
+      - smartidc-net
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 15s
+
+  # 2. 高频热遥测与分布式锁 Redis 7.x
+  smartidc-redis:
+    image: redis:7-alpine
+    container_name: smartidc-redis
+    restart: unless-stopped
+    command: redis-server --requirepass smartidc123 --appendonly yes
+    ports:
+      - "6389:6379"   # 避开宿主机原生 6379
+    volumes:
+      - redis_data:/data
+    networks:
+      - smartidc-net
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "smartidc123", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  # 3. 工业级物联接入 MQTT Broker (EMQX 5.x)
+  smartidc-emqx:
+    image: emqx/emqx:5.8.0
+    container_name: smartidc-emqx
+    restart: unless-stopped
+    environment:
+      EMQX_NODE__NAME: emqx@127.0.0.1
+      EMQX_DASHBOARD__DEFAULT_USERNAME: admin
+      EMQX_DASHBOARD__DEFAULT_PASSWORD: smartidc123
+    ports:
+      - "1883:1883"     # MQTT 协议标准端口
+      - "8083:8083"     # MQTT over WebSocket
+      - "18083:18083"   # EMQX Dashboard 可视化运维控制台
+    volumes:
+      - emqx_data:/opt/emqx/data
+      - emqx_log:/opt/emqx/log
+    networks:
+      - smartidc-net
+
+  # 4. AIOps 运维预案与 SOP 向量库 (PostgreSQL 16 + pgvector)
+  smartidc-pgvector:
+    image: pgvector/pgvector:pg16
+    container_name: smartidc-pgvector
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: smartidc
+      POSTGRES_PASSWORD: smartidc123
+      POSTGRES_DB: smartidc_aiops
+      TZ: Asia/Shanghai
+    ports:
+      - "5433:5432"   # 避开宿主机已有 5432 容器
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+      - ./postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    networks:
+      - smartidc-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U smartidc -d smartidc_aiops"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 10s
+
+  # 5. 巡检现场照片与存证对象存储 MinIO
+  smartidc-minio:
+    image: quay.io/minio/minio:latest
+    container_name: smartidc-minio
+    restart: unless-stopped
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: smartidc_admin
+      MINIO_ROOT_PASSWORD: smartidc123
+    ports:
+      - "9000:9000"   # S3 API 访问端口
+      - "9001:9001"   # Web 管理控制台
+    volumes:
+      - minio_data:/data
+    networks:
+      - smartidc-net
+
+  # 6. 智维云后端核心服务 (jlink 裁剪极简运行时, < 180MB)
+  smartidc-backend:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.backend
+    container_name: smartidc-backend
+    restart: unless-stopped
+    environment:
+      TZ: Asia/Shanghai
+      SPRING_DATASOURCE_URL: jdbc:mysql://smartidc-mysql:3306/smartidc?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+      SPRING_DATA_REDIS_HOST: smartidc-redis
+      SPRING_DATA_REDIS_PORT: 6379
+      SPRING_DATA_REDIS_PASSWORD: smartidc123
+    ports:
+      - "8080:8080"
+    depends_on:
+      smartidc-mysql:
+        condition: service_healthy
+      smartidc-redis:
+        condition: service_healthy
+    networks:
+      - smartidc-net
+
+  # 7. 智维云前端 Web 静态中台与 Nginx 零缓冲高性能分发
+  smartidc-frontend:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.frontend
+    container_name: smartidc-frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      - smartidc-backend
+    networks:
+      - smartidc-net
+
